@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Happy Confession Day</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Lora:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@1,500&display=swap&subset=vietnamese" rel="stylesheet">
+<style>
+:root {
+  /* Một đêm thắp nến: nền tím đêm, ánh nến hổ phách, thư giấy hồng nhạt, hoa hồng phấn */
+  --night: #1d1727;
+  --night-2: #2a2036;
+  --glow: #f4c27a;
+  --paper: #fbf5f0;
+  --ink: #3b2b35;
+  --rose: #d6869c;
+  --leaf: #7d9a78;
+  --muted: #b9a9bd;
+  --font-display: "Playfair Display", "Times New Roman", serif;
+  --font-hand: "Dancing Script", "Brush Script MT", cursive;
+  --font-body: "Lora", Georgia, "Times New Roman", serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+html { background: var(--night); }
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 8%, rgba(244,194,122,.20), transparent 70%),
+    linear-gradient(180deg, var(--night-2), var(--night) 60%);
+  background-color: var(--night);
+  color: var(--muted);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+#petals { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+main {
+  position: relative; z-index: 1;
+  max-width: 640px; margin: 0 auto;
+  padding: 40px 16px 64px;
+  display: flex; flex-direction: column; align-items: center; gap: 28px;
+}
+
+body.locked main { min-height: 100vh; justify-content: center; padding-bottom: 12vh; }
+
+/* Header */
+header { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.dates {
+  font-size: 1rem; letter-spacing: .28em; text-transform: uppercase; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+h1 {
+  margin: 0; font-family: var(--font-display); font-style: italic; font-weight: 500;
+  font-size: clamp(2rem, 8.5vw, 3.4rem); color: var(--glow); line-height: 1.1;
+  text-transform: uppercase; letter-spacing: .04em;
+  text-wrap: balance;
+  text-shadow: 0 0 28px rgba(244,194,122,.35);
+}
+
+/* Candle */
+.candle-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.candle {
+  position: relative; width: 74px; height: 128px; border: 0; padding: 0; background: none; cursor: pointer;
+  border-radius: 12px;
+}
+.candle:focus-visible { outline: 2px dashed var(--glow); outline-offset: 6px; }
+.candle .halo {
+  position: absolute; left: 50%; top: 6px; width: 150px; height: 150px; transform: translate(-50%, -30%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(244,194,122,.42), rgba(244,194,122,0) 65%);
+  transition: opacity .6s ease;
+}
+.candle .flame {
+  position: absolute; left: 50%; top: 4px; width: 18px; height: 34px; margin-left: -9px;
+  border-radius: 50% 50% 45% 45% / 62% 62% 38% 38%;
+  background: radial-gradient(ellipse at 50% 75%, #fff8e6 0 22%, #ffd889 40%, #f39a4a 72%, rgba(243,154,74,0) 100%);
+  transform-origin: 50% 90%;
+  animation: flicker 2.4s ease-in-out infinite;
+  transition: opacity .4s ease, transform .4s ease;
+}
+.candle .wick { position: absolute; left: 50%; top: 34px; width: 2px; height: 10px; margin-left: -1px; background: #3a2b22; border-radius: 1px; }
+.candle .body {
+  position: absolute; left: 50%; bottom: 0; width: 42px; height: 86px; margin-left: -21px;
+  border-radius: 6px 6px 4px 4px;
+  background: linear-gradient(90deg, #e9c9cf, #f8e7e9 45%, #dbb2bb);
+  box-shadow: inset 0 6px 0 rgba(255,255,255,.35);
+}
+.candle .body::before {
+  content: ""; position: absolute; left: 6px; top: -2px; width: 12px; height: 18px;
+  border-radius: 0 0 8px 8px; background: #f8e7e9;
+}
+.candle.out .flame { opacity: 0; transform: scale(.2) translateY(6px); animation: none; }
+.candle.out .halo { opacity: 0; }
+.smoke {
+  position: absolute; left: 50%; top: 10px; width: 6px; height: 30px; margin-left: -3px;
+  border-radius: 50%; background: rgba(220,210,225,.35); filter: blur(3px); opacity: 0; pointer-events: none;
+}
+.candle.out .smoke { animation: smoke 1.6s ease-out 1; }
+.hint { font-size: .82rem; color: var(--muted); min-height: 1.2em; }
+@keyframes flicker {
+  0%,100% { transform: scaleY(1) rotate(-1deg); }
+  25% { transform: scaleY(1.08) rotate(1.5deg); }
+  50% { transform: scaleY(.94) rotate(-2deg); }
+  75% { transform: scaleY(1.04) rotate(1deg); }
+}
+@keyframes smoke {
+  0% { opacity: .7; transform: translateY(0) scaleX(1); }
+  100% { opacity: 0; transform: translateY(-40px) scaleX(2.2); }
+}
+
+
+/* Lock */
+.lock {
+  width: 100%; max-width: 340px; display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding: 22px 20px; border-radius: 14px;
+  background: rgba(251,245,240,.06); border: 1px solid rgba(244,194,122,.28);
+  animation: rise .5s ease-out both;
+}
+.lock[hidden] { display: none; }
+.lock label { color: var(--paper); font-size: 1rem; }
+.lock-row { display: flex; gap: 8px; width: 100%; }
+.lock input {
+  flex: 1; min-width: 0; font: inherit; font-size: 1.2rem; letter-spacing: .3em; text-align: center;
+  padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(244,194,122,.4);
+  background: rgba(0,0,0,.25); color: var(--paper);
+}
+.lock input:focus-visible { outline: 2px solid var(--glow); outline-offset: 1px; }
+.lock button {
+  font: inherit; font-weight: 500; padding: 10px 16px; border-radius: 10px; border: 0; cursor: pointer;
+  background: var(--glow); color: var(--night);
+}
+.lock button:focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
+.lock-msg { font-size: .85rem; color: var(--muted); text-align: center; }
+.lock-msg.err { color: var(--rose); }
+.lock.shake { animation: shake .4s ease; }
+@keyframes shake { 20%,60% { transform: translateX(-7px); } 40%,80% { transform: translateX(7px); } }
+.letter[hidden] { display: none; }
+.letter.reveal { animation: unfold 1s ease-out both; }
+@keyframes unfold { from { transform: translateY(24px) scale(.97); opacity: .2; } to { transform: none; opacity: 1; } }
+
+/* Letter */
+.letter {
+  position: relative; width: 100%;
+  background: var(--paper); color: var(--ink);
+  border-radius: 6px;
+  padding: 44px clamp(22px, 6vw, 52px) 40px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(214,134,156,.18);
+  animation: rise .9s ease-out both;
+}
+.letter::before {
+  content: ""; position: absolute; inset: 10px; border: 1px solid rgba(214,134,156,.35); border-radius: 3px; pointer-events: none;
+}
+.bouquet { position: absolute; top: -34px; right: 14px; width: 112px; height: 120px; }
+.letter .greeting { font-family: var(--font-hand); font-weight: 700; font-size: 2rem; color: var(--rose); margin: 0 0 18px; }
+.letter p { margin: 0 0 1.05em; font-size: 1.06rem; line-height: 1.85; max-width: 62ch; }
+.letter p.close { margin-top: 1.4em; }
+.letter .sign {
+  font-family: var(--font-hand); font-weight: 700; font-size: 2.6rem; color: var(--rose);
+  text-align: right; margin: 6px 6px 0; line-height: 1; max-width: none;
+}
+@keyframes rise { from { transform: translateY(14px); } to { transform: none; } }
+
+@media (max-width: 420px) {
+  .bouquet { width: 86px; height: 94px; top: -26px; right: 8px; }
+  .letter p { font-size: 1rem; line-height: 1.8; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .candle .flame, .letter, .letter.reveal, .lock, .lock.shake { animation: none; }
+  .candle.out .smoke { animation: none; }
+}
+</style>
+</head>
+<body class="locked">
+<canvas id="petals" aria-hidden="true"></canvas>
+<main>
+  <header>
+    <div class="dates">6.10 – 6.11</div>
+    <h1>Happy Confession Day</h1>
+  </header>
+
+  <div class="candle-wrap">
+    <button class="candle out" id="candle" type="button" aria-controls="lock" aria-expanded="false" aria-label="Chạm vào nến để mở thư">
+      <span class="halo"></span>
+      <span class="flame"></span>
+      <span class="wick"></span>
+      <span class="body"></span>
+    </button>
+    <div class="hint" id="hint">Chạm vào nến để mở thư</div>
+  </div>
+
+  <form class="lock" id="lock" hidden autocomplete="off">
+    <label for="pass">Nhập mật khẩu để đọc thư</label>
+    <div class="lock-row">
+      <input id="pass" name="pass" type="password" inputmode="numeric" maxlength="6" placeholder="••••••" aria-describedby="lock-msg">
+      <button type="submit" id="open-btn">Mở thư</button>
+    </div>
+    <div class="lock-msg" id="lock-msg">Gợi ý: ngày đặc biệt của tụi mình</div>
+  </form>
+
+  <article class="letter" id="letter" hidden>
+    <svg class="bouquet" viewBox="0 0 112 120" aria-hidden="true">
+      <defs>
+        <g id="fl">
+          <ellipse cx="0" cy="-9" rx="6.5" ry="9" />
+          <ellipse cx="0" cy="-9" rx="6.5" ry="9" transform="rotate(72)" />
+          <ellipse cx="0" cy="-9" rx="6.5" ry="9" transform="rotate(144)" />
+          <ellipse cx="0" cy="-9" rx="6.5" ry="9" transform="rotate(216)" />
+          <ellipse cx="0" cy="-9" rx="6.5" ry="9" transform="rotate(288)" />
+        </g>
+      </defs>
+      <g stroke="#7d9a78" stroke-width="2.2" fill="none" stroke-linecap="round">
+        <path d="M56 116 C54 92 40 70 34 46" />
+        <path d="M56 116 C58 88 64 64 74 34" />
+        <path d="M56 116 C56 96 54 80 56 60" />
+      </g>
+      <g fill="#93b08d">
+        <ellipse cx="44" cy="84" rx="9" ry="4" transform="rotate(-35 44 84)" />
+        <ellipse cx="66" cy="80" rx="9" ry="4" transform="rotate(30 66 80)" />
+      </g>
+      <g fill="#d6869c"><use href="#fl" transform="translate(34 40)" /></g>
+      <g fill="#e7a8b8"><use href="#fl" transform="translate(76 30) scale(1.1)" /></g>
+      <g fill="#c9748c"><use href="#fl" transform="translate(56 56) scale(.9)" /></g>
+      <g fill="#f4c27a">
+        <circle cx="34" cy="40" r="4" /><circle cx="76" cy="30" r="4.4" /><circle cx="56" cy="56" r="3.6" />
+      </g>
+    </svg>
+
+    <p class="greeting">Gửi Quang Minh,</p>
+
+    <p>Hôm nay là tròn một tháng kể từ ngày 6/10, ngày anh tỏ tình với em. Một tháng trôi qua nhanh ghê, mà em thì vẫn chưa hết vui.</p>
+
+    <p>Em vẫn nhớ mấy ngày đầu, hai đứa deeptalk hoài không chán. Hết chuyện này lại sang chuyện khác, nói một mạch mà vẫn còn chuyện để nói. Em không ngờ lại gặp được anh để nói chuyện hợp tới vậy, nên em quý những ngày đó lắm.</p>
+
+    <p>Tất nhiên tụi mình cũng có cãi nhau. Có hôm cãi qua cãi lại tới mức em tính đi học thêm ngành luật, ra làm luật sư luôn cho đủ trình hùng biện với anh. Nhưng cãi xong thì tụi mình vẫn quay lại tìm nhau. Em nghĩ thương nhau đâu phải là không bao giờ bất đồng, mà là bất đồng xong vẫn muốn ở cạnh nhau.</p>
+
+    <p>Hôm nay em tặng anh hoa với nến. Hoa là thứ em thích, nên em muốn anh cũng có một bó. Hy vọng anh thích nha. Mỗi lần thắp nến lên thì nhớ tới em một chút là được rồi.</p>
+
+    <p>Em không hứa gì to tát đâu. Em chỉ mong tháng sau, rồi tháng sau nữa, tụi mình vẫn còn chuyện để kể cho nhau nghe, vẫn cãi nhau mấy trận nho nhỏ rồi làm lành, và vẫn vui mỗi lần nhắn tin cho nhau.</p>
+
+    <p>Cảm ơn anh đã nói ra trước. Em vui vì anh đã làm vậy.</p>
+
+    <p class="close">Chúc mừng một tháng của tụi mình. Thương Quang Minh nhiều lắm.</p>
+
+    <p class="sign">Sa</p>
+  </article>
+</main>
+
+<script>
+(function () {
+  // Candle -> password -> letter
+  var candle = document.getElementById('candle');
+  var hint = document.getElementById('hint');
+  var lock = document.getElementById('lock');
+  var pass = document.getElementById('pass');
+  var msg = document.getElementById('lock-msg');
+  var letter = document.getElementById('letter');
+  var opened = false;
+
+  candle.addEventListener('click', function () {
+    if (opened) return;
+    candle.classList.remove('out');
+    lock.hidden = false;
+    candle.setAttribute('aria-expanded', 'true');
+    hint.textContent = 'Nến đã thắp, giờ nhập mật khẩu nha';
+    setTimeout(function () { try { pass.focus(); } catch (e) {} }, 60);
+  });
+
+  lock.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = pass.value.replace(/\D/g, '');
+    if (v === '061026') {
+      opened = true;
+      document.body.classList.remove('locked');
+      lock.hidden = true;
+      letter.hidden = false;
+      letter.classList.add('reveal');
+      hint.textContent = 'Ting ting! Mật khẩu chuẩn đét. Giờ thì đọc thư của em nhen.';
+      candle.setAttribute('aria-label', 'Nến');
+      setTimeout(function () {
+        try { letter.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); } catch (err) {}
+      }, 120);
+    } else {
+      msg.textContent = 'Sai mật khẩu rồi, thử lại nha';
+      msg.classList.add('err');
+      lock.classList.remove('shake');
+      void lock.offsetWidth;
+      lock.classList.add('shake');
+      pass.select();
+    }
+  });
+
+  // Falling petals
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cv = document.getElementById('petals');
+  var ctx = cv.getContext('2d');
+  var W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var colors = ['#d6869c', '#e7a8b8', '#c9748c', '#f2c6d0'];
+  var petals = [];
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function make(randomY) {
+    return {
+      x: Math.random() * W,
+      y: randomY ? Math.random() * H : -20,
+      r: 4 + Math.random() * 5,
+      vy: .35 + Math.random() * .6,
+      vx: -.2 + Math.random() * .4,
+      rot: Math.random() * Math.PI * 2,
+      vr: -.02 + Math.random() * .04,
+      sway: Math.random() * Math.PI * 2,
+      c: colors[(Math.random() * colors.length) | 0],
+      a: .45 + Math.random() * .4
+    };
+  }
+  function draw(p) {
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.globalAlpha = p.a;
+    ctx.fillStyle = p.c;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, p.r, p.r * .6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < petals.length; i++) {
+      var p = petals[i];
+      p.sway += .015;
+      p.x += p.vx + Math.sin(p.sway) * .4;
+      p.y += p.vy;
+      p.rot += p.vr;
+      if (p.y > H + 20 || p.x < -30 || p.x > W + 30) petals[i] = make(false);
+      draw(p);
+    }
+    requestAnimationFrame(frame);
+  }
+  resize();
+  var n = W < 500 ? 16 : 28;
+  for (var i = 0; i < n; i++) petals.push(make(true));
+  window.addEventListener('resize', resize);
+  if (reduce) { petals.forEach(draw); } else { requestAnimationFrame(frame); }
+})();
+</script>
+</body>
+</html>
